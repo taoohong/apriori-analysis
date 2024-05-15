@@ -1,0 +1,203 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<script src="../static/js/jquery.min.js" type="text/javascript" charset='utf-8'></script>
+<script src="../static/js/echarts.js" charset='utf-8'></script>
+
+<script type="text/javascript">
+    // 初始化界面
+    $(function () {
+
+        $('#li_1').attr('class', '');
+        $('#li_2').attr('class', 'active');
+        $('#li_3').attr('class', '');
+
+        // 判断是否登录
+        $.get('http://127.0.0.1:5000/check_login', {},
+            function (data) {
+                console.log(data);
+                if (data['login'] === false) {
+                    window.location.href = '/'
+                }
+            }
+        );
+
+        $.get('/type_vis', {},
+            function (data) {
+                var dom = document.getElementById("main1");
+                var myChart = echarts.init(dom);
+
+                var series_data = [];
+                for (var i = 0; i < data['类别'].length; i++) {
+                    series_data.push({value: parseInt(data['商品个数'][i]), name: data['类别'][i]})
+                }
+
+                var option = {
+                    title: {
+                        left: 'center',
+                        text: '超市不同类别商品的数量分布饼状图',
+                    },
+                    backgroundColor: '#F9F9F9',
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{a} <br/>{b} : {c} ({d}%)'
+                    },
+                    series: [
+                        {
+                            name: '商品数',
+                            type: 'pie',
+                            radius: '60%',
+                            center: ['50%', '50%'],
+                            data: series_data,
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+
+                dom = document.getElementById("main2");
+                myChart = echarts.init(dom);
+
+                option = {
+                    title: {
+                        left: 'center',
+                        text: '超市不同用户一次购买商品件数分布情况',
+                    },
+                    backgroundColor: '#F9F9F9',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '7%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        name: '件数',
+                        type: 'category',
+                        data: data['购买商品个数']
+                    },
+                    yAxis: {
+                        name: '人数',
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: '人数',
+                            type: 'line',
+                            itemStyle: {
+                                color: '#ca5455',
+                            },
+                            lineStyle: {
+                                width: 4
+                            },
+                            data: data['购买商品个数人次']
+                        },
+                        {
+                            type: 'bar',
+                            itemStyle: {
+                                color: '#19CAAD',
+                            },
+                            lineStyle: {
+                                width: 4
+                            },
+                            data: data['购买商品个数人次']
+                        }
+                    ]
+                };
+
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+
+                var dom = document.getElementById("main3");
+                var myChart = echarts.init(dom);
+
+                var option = {
+                    title: {
+                        left: 'center',
+                        text: '购买商品数量分布直方图',
+                    },
+                    backgroundColor: '#F9F9F9',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '7%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        name: '商品',
+                        type: 'category',
+                        data: data['商品']
+                    },
+                    yAxis: {
+                        name: '售卖个数',
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: '购买人数',
+                            type: 'line',
+                            itemStyle: {
+                                color: '#ca5455',
+                            },
+                            lineStyle: {
+                                width: 4
+                            },
+                            data: data['购买商品的人数']
+                        },
+                        {
+                            type: 'bar',
+                            itemStyle: {
+                                color: '#BE81F7',
+                            },
+                            lineStyle: {
+                                width: 4
+                            },
+                            data: data['购买商品的人数']
+                        }
+                    ]
+                };
+
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            }
+        );
+
+    });
+</script>
+
+<div class="container">
+    <h3 class="page-header">超市商品类别分布与用户购买的基本信息分布情况</h3>
+    <div class="row placeholders" style="margin-top: 10px;">
+        <div class="col-xs-5 placeholder" style="height:500px;" id="main1"></div>
+        <div class="col-xs-7 placeholder" style="height:500px;" id="main2"></div>
+    </div>
+
+    <h3 class="page-header">购买商品数量分布情况</h3>
+    <div class="row placeholders" style="margin-top: 10px;">
+        <div class="col-xs-12 placeholder" style="height:500px;" id="main3"></div>
+    </div>
+</div>
+
+{% endblock %}

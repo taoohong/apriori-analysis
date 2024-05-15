@@ -1,0 +1,73 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+<script src="../static/js/jquery.min.js" type="text/javascript" charset='utf-8'></script>
+<script src="https://cdn.bootcss.com/echarts/4.4.0-rc.1/echarts.js" charset='utf-8'></script>
+
+<script type="text/javascript">
+    function draw_tabels(year, month) {
+        $('#items').empty();
+        $.get('http://127.0.0.1:5000/get_weather_by_year_month/' + year + '/' + month, {},
+            function (data) {
+                data.forEach((topic, index) => {
+                    $('#items').append('<tr><td>' + topic[0] + '</td><td>' + topic[1] + '</td><td>' + topic[2] + '</td><td>' + topic[3] + '</td><td>' + topic[4] + '</td><td>' + topic[5] + '</td></tr>')
+                });
+            }
+        );
+    }
+
+    // 初始化界面
+    $(function () {
+        $('#li_1').attr('class', 'active');
+        $('#li_2').attr('class', '');
+        $('#li_3').attr('class', '');
+
+        $.ajaxSetup({async: false});
+
+
+        // 判断是否登录
+        $.get('http://127.0.0.1:5000/check_login', {},
+            function (data) {
+                console.log(data);
+                if (data['login'] === false) {
+                    window.location.href = '/'
+                }
+            }
+        );
+
+        $.get('http://127.0.0.1:5000/query_products', {},
+            function (data) {
+                data.forEach((topic, index) => {
+                    $('#items').append('<tr><td>' + index + '</td><td>' + topic + '</td></tr>')
+                });
+            }
+        );
+    });
+
+
+
+</script>
+
+<!--右边展示-->
+<div class="container">
+    <h3 class="page-header">查询最新的超市商品销售数据</h3>
+
+    <div class="row placeholders">
+        <!--展示区-->
+        <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+        <div class="col-xs-12 placeholder">
+            <table class="table table-striped table-hover" style="margin-top: 10px; font-size: 18px" align="left">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>销售商品列表</th>
+                </tr>
+                </thead>
+                <tbody id="items">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

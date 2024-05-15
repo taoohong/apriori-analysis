@@ -1,0 +1,106 @@
+﻿{% extends "layout.html" %}
+
+{% block content %}
+<script src="../static/js/jquery.min.js" type="text/javascript" charset='utf-8'></script>
+
+<script type="text/javascript">
+    // 初始化界面
+    $(function () {
+        $('#li_1').attr('class', '');
+        $('#li_2').attr('class', '');
+        $('#li_3').attr('class', '');
+        $('#li_4').attr('class', '');
+
+        // 判断是否登录
+        $.get('http://127.0.0.1:5000/check_login', {},
+            function (data) {
+                console.log(data);
+                if (data['login'] === false) {
+                    $('#show_login_reg').show();
+                }
+                else {
+                    $('#login_register').hide();
+                    $('#info').attr('class', 'col-lg-12');
+                }
+            }
+        );
+
+        $("#reg_submit").click(function () {
+            const name = $("#name").val();
+            const password = $("#password").val();
+
+            console.log(name);
+            console.log(password);
+
+            if ((name === undefined) || (password === undefined) || (name === '') || (password === '')) {
+                alert('字段不能为空！');
+                return
+            }
+
+            // 获取时间
+            $.get('http://127.0.0.1:5000/register/' + name + '/' + password, {},
+                function (data) {
+                    alert(data['info'])
+                }
+            );
+        });
+
+        $("#login_submit").click(function () {
+            const name = $("#name").val();
+            const password = $("#password").val();
+
+            console.log(name);
+            console.log(password);
+
+            if ((name === undefined) || (password === undefined) || (name === '') || (password === '')) {
+                alert('login_submit字段不能为空！');
+                return
+            }
+
+            // 获取时间
+            $.get('http://127.0.0.1:5000/login/' + name + '/' + password, {},
+                function (data) {
+                    alert(data['info']);
+                    if (data['status'] == 'ok') {
+                        window.location.href = "/"
+                    }
+                }
+            );
+        });
+
+    });
+</script>
+
+<div class="container">
+
+    <!-- Main component for a primary marketing message or call to action -->
+    <div class="jumbotron" id="show_login_reg" style="font-size: 20px;">
+        <div style="height: 150px;">
+            <div class="row">
+                <div class="col-lg-6" id="info">
+                    <h4>大型超市商品销售关联度分析系统</h4>
+                    <p style="font-size: 18px;">根据录入的数据，建立相关数据模型，对数据进行统计预测，输出统计分析表，数据挖掘利用Apriori算法进行产品关联度的显示和排行，
+                        分析超市产品之间的关联度，优化超市货品的摆放。</p>
+                </div>
+                <div class="col-lg-6" style="font-size: 18px;" id="login_register">
+                    <h4>注册/登录</h4>
+                    <p><span style="font-size: 18px;">用户名：</span><input id="name" style="width: 70%;" type="text"></p>
+                    <p><span style="font-size: 18px;">密&nbsp;&nbsp;&nbsp;码：</span><input id="password" type="password" style="width: 70%;"></p>
+                    <p>
+                        <button class="btn btn-primary" id="reg_submit">注册&raquo;</button>
+                        <button class="btn btn-primary" id="login_submit">登录&raquo;</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="">
+        <div class="col-sm-12">
+            <img src="https://www.longsok.com/uploads/allimg/180115/-1-1P1150TR24B.jpg"
+                 style="width: 100%; height: 100%" id="index_img">
+        </div>
+    </div>
+</div>
+
+{% endblock %}
