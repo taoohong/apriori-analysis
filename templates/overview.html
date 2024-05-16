@@ -13,7 +13,7 @@
         $('#li_3').attr('class', '');
 
         // 判断是否登录
-        $.get('http://127.0.0.1:5000/check_login', {},
+        $.get('http://127.0.0.1:50000/check_login', {},
             function (data) {
                 console.log(data);
                 if (data['login'] === false) {

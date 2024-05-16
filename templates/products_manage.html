@@ -7,7 +7,7 @@
 <script type="text/javascript">
     function draw_tabels(year, month) {
         $('#items').empty();
-        $.get('http://127.0.0.1:5000/get_weather_by_year_month/' + year + '/' + month, {},
+        $.get('http://127.0.0.1:50000/get_weather_by_year_month/' + year + '/' + month, {},
             function (data) {
                 data.forEach((topic, index) => {
                     $('#items').append('<tr><td>' + topic[0] + '</td><td>' + topic[1] + '</td><td>' + topic[2] + '</td><td>' + topic[3] + '</td><td>' + topic[4] + '</td><td>' + topic[5] + '</td></tr>')
@@ -26,7 +26,7 @@
 
 
         // 判断是否登录
-        $.get('http://127.0.0.1:5000/check_login', {},
+        $.get('http://127.0.0.1:50000/check_login', {},
             function (data) {
                 console.log(data);
                 if (data['login'] === false) {
@@ -35,7 +35,7 @@
             }
         );
 
-        $.get('http://127.0.0.1:5000/query_products', {},
+        $.get('http://127.0.0.1:50000/query_products', {},
             function (data) {
                 data.forEach((topic, index) => {
                     $('#items').append('<tr><td>' + index + '</td><td>' + topic + '</td></tr>')

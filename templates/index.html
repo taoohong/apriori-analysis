@@ -12,7 +12,7 @@
         $('#li_4').attr('class', '');
 
         // 判断是否登录
-        $.get('http://127.0.0.1:5000/check_login', {},
+        $.get('http://127.0.0.1:50000/check_login', {},
             function (data) {
                 console.log(data);
                 if (data['login'] === false) {
@@ -38,7 +38,7 @@
             }
 
             // 获取时间
-            $.get('http://127.0.0.1:5000/register/' + name + '/' + password, {},
+            $.get('http://127.0.0.1:50000/register/' + name + '/' + password, {},
                 function (data) {
                     alert(data['info'])
                 }
@@ -58,7 +58,7 @@
             }
 
             // 获取时间
-            $.get('http://127.0.0.1:5000/login/' + name + '/' + password, {},
+            $.get('http://127.0.0.1:50000/login/' + name + '/' + password, {},
                 function (data) {
                     alert(data['info']);
                     if (data['status'] == 'ok') {
