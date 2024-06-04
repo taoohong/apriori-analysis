@@ -8,6 +8,11 @@ from mlxtend.frequent_patterns import apriori
 # 导入关联规则包
 from mlxtend.frequent_patterns import association_rules
 
+def save_to_database(result, table):
+    conn = sqlite3.connect('./results/database.db')
+    result.to_sql(table, conn, if_exists='replace', index=False)
+    conn.close()
+
 app = Flask(__name__)
 app.config.from_object('config')
 
@@ -15,12 +20,14 @@ login_name = None
 
 order_df = pd.read_csv('./data/GoodsOrder.csv', encoding='utf-8')
 type_df = pd.read_csv('./data/GoodsTypes.csv', encoding='utf-8')
+save_to_database(type_df, 'goods')
 
 order_group = order_df.groupby(by='id')
 
 products = []
 for id_, df in order_group:
     products.append(df['Goods'].values.tolist())
+
 
 
 # --------------------- html render ---------------------
@@ -115,6 +122,7 @@ def login(name, password):
 def type_vis():
     """婴儿性别和年龄数据"""
     type_counts = type_df['Types'].value_counts().reset_index()
+    type_counts.columns = ['Types', 'count']
     type_counts = type_counts.sort_values(by='count')
 
     # 用户一次购买商品数量分布
@@ -162,12 +170,14 @@ def clac_product_association(min_support, min_threshold):
     # 结果保存
     # result.to_csv('./results/product_association_min_support{}_{}.csv'.format(min_support, min_threshold),
     #               encoding='utf8', index=False)
-
+    rc = result.copy()
+    rc['antecedents'] = rc['antecedents'].apply(lambda x: ', '.join(sorted(list(x))))
+    rc['consequents'] = rc['consequents'].apply(lambda x: ', '.join(sorted(list(x))))
+    save_to_database(rc, 'product_association_min_support{}_{}'.format(min_support, min_threshold))
     results = result.to_dict(orient='records')
     for result in results:
         result['antecedents'] = str(result['antecedents'])[10: -1]  # 前因
         result['consequents'] = str(result['consequents'])[10: -1]  # 后果
-
     return jsonify(results)
 
 
@@ -196,8 +206,9 @@ def query_products():
         for pro in pros:
             s += '<span style="margin-right:10px; color:#B43104">{}</span>'.format(pro)
         products_str.append(s)
-    print(products_str)
+    # print(products_str)
     return jsonify(products_str[::-1][:40])
+
 
 
 if __name__ == "__main__":
