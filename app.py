@@ -20,6 +20,7 @@ login_name = None
 
 order_df = pd.read_csv('./data/GoodsOrder.csv', encoding='utf-8')
 type_df = pd.read_csv('./data/GoodsTypes.csv', encoding='utf-8')
+save_to_database(order_df, 'orders')
 save_to_database(type_df, 'goods')
 
 order_group = order_df.groupby(by='id')
